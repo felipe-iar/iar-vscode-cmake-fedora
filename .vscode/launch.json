@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cspy",
+            "request": "launch",
+            "name": "Debug with C-SPY simulator",
+            "target": "arm",
+            "program": "${workspaceFolder}/build/hello.elf",
+            "stopOnEntry": true,
+            "workbenchPath": "C:/IAR_Systems/EW/ARM/9.30.1",
+            "driver": "Simulator",
+            "driverOptions": [
+                "--endian=little",
+                "--cpu=Cortex-M4",
+                "--fpu=None",
+                "--semihosting"
+            ]
+        }
+    ]
+}

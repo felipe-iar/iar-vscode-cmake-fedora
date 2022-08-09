@@ -1,0 +1,21 @@
+[
+    {
+        "name": "IAR EWARM 9.30.1",
+        "environmentVariables": {
+            "TOOLKIT_DIR": "C:/IAR_Systems/EW/ARM/9.30.1/arm",
+            "PATH": "C:/IAR_Systems/EW/ARM/9.30.1/common/bin;${env:PATH}"
+          },
+          "compilers": {
+            "C":   "${env:TOOLKIT_DIR}/bin/iccarm.exe",
+            "CXX": "${env:TOOLKIT_DIR}/bin/iccarm.exe",
+            "ASM": "${env:TOOLKIT_DIR}/bin/iasmarm.exe"
+          },
+        "preferredGenerator": {
+            "name": "Ninja"
+        },
+        "cmakeSettings": {            
+            "CMAKE_BUILD_TYPE": "Debug",
+            "TOOLKIT_DIR": "${env:TOOLKIT_DIR}"
+          }
+    }
+]
