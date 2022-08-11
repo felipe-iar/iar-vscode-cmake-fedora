@@ -17,7 +17,8 @@ This mini-guide provides the essentials for quickly setting up a "hello world" p
    - `sudo dnf install ~/Downloads/JLink*.rpm`
 
 ## Procedure
-- Launch __Visual Studio Code__ (`code`).
+- Launch __Visual Studio Code__
+   - `code`
 - Select: `File` → `Open Folder...` (<kbd>Ctrl</kbd>+<kbd>K</kbd>, <kbd>Ctrl</kbd>+<kbd>O</kbd>).
 - Create a new empty folder. (e.g., "`hello`"). This folder will be referred to as `<proj-dir>` from now on.
 
