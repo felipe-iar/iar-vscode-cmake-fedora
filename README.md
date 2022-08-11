@@ -113,12 +113,12 @@ When creating a project from scratch like in here, we could create a `<proj-dir>
 - Invoke the palette 
    - Perform `CMake: Build`.
 
-Output:
+__Output:__
 ```
 [main] Building folder: hello
 [build] Starting build
-[proc] Executing command: <path-to>/cmake --build c:/hello/build --config Debug --target all --
-[build] [1/2  50% :: 0.047] Building C object CMakeFiles/hello.dir/main.c.o
-[build] [2/2 100% :: 0.096] Linking C executable hello.elf
+[proc] Executing command: /usr/bin/cmake --build /home/user/hello/build --config Debug --target all --
+[build] [1/2  50% :: 0.041] Building C object CMakeFiles/hello.dir/main.c.o
+[build] [2/2 100% :: 0.149] Linking C executable hello.elf
 [build] Build finished with exit code 0
 ```
