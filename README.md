@@ -1,16 +1,20 @@
-# iar-vscode-cmake
+# iar-vscode-cmake-on-fedora
 
-This mini-guide provides the essentials for quickly setting up a "hello world" project for an Arm Cortex-M3 target with CMake on Visual Studio Code. In the end we will debug it using the IAR C-SPY Debugger's Simulator.
+This mini-guide provides the essentials for quickly setting up a "hello world" project for an Arm Cortex-M3 target built with the IAR Build Tools using CMake on Visual Studio Code on Fedora Linux. In the end we will debug it using the GNU Debugger.
 
 ## Pre-requisites
-- [IAR C-SPY Debugger](https://iar.com/ewarm) (installed with the IAR Embedded Workbench)
-- [CMake 3.23+](https://github.com/kitware/cmake/releases/latest)
-- [Visual Studio Code](https://code.visualstudio.com)
+- [Fedora Workstation 36](https://getfedora.org)
+- [IAR Build Tools](https://iar.com/bx)
+- CMake
+   - `sudo dnf install cmake`
+- Ninja
+   - `sudo dnf install ninja-build`
+- [Visual Studio Code (`.rpm`, `64-bit`)](https://code.visualstudio.com/Download)
    - [CMake Tools extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)
-   - [IAR Debug extension](https://marketplace.visualstudio.com/items?itemName=iarsystems.iar-debug)
+   - [Cortex-Debug](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug)
 
 ## Procedure
-- Launch VSCode.
+- Launch __Visual Studio Code__ (`code`).
 - Select: `File` → `Open Folder...` (<kbd>Ctrl</kbd>+<kbd>K</kbd>, <kbd>Ctrl</kbd>+<kbd>O</kbd>).
 - Create a new empty folder. (e.g., "`hello`"). This folder will be referred to as `<proj-dir>` from now on.
 
@@ -44,28 +48,50 @@ add_executable(hello
 target_compile_options(hello PRIVATE --cpu Cortex-M3 $<$<COMPILE_LANGUAGE:C,CXX>:--dlib_config normal> )
 
 # Set the linker options for the "hello" executable target
-target_link_options(hello PRIVATE --semihosting --config "${TOOLKIT_DIR}/config/generic.icf" )
+target_link_options(hello PRIVATE 
+  --semihosting
+  --config "${TOOLKIT_DIR}/config/generic.icf" )
 ```
 
-### Creating the VSCode project's general settings
-Creating a `<proj-dir>/.vscode/settings.json` is useful for a number of reasons. Here is an example in which the complete path to `cmake.exe` is specified for a particular project.
-```json
-{
-  "cmake.configureOnOpen": false,
-  "cmake.cmakePath": "/path/to/bin/cmake.exe",
-}
+### Create a Toolchain File
+Create a new `<proj-dir>/iar-toolchain.cmake` file:
+```cmake
+# Toolchain File for the IAR C/C++ Compiler
+
+# "Generic" is used when cross compiling
+set(CMAKE_SYSTEM_NAME Generic)
+
+# Avoids running the linker during try_compile()
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+
+# Action: Set the `<arch>` to the compiler's target architecture
+# Examples: 430, 8051, arm, avr, riscv, rx, rl78, rh850, stm8 or v850
+set(CMAKE_SYSTEM_PROCESSOR arm)
+
+# Action: Set the `IAR_INSTALL_DIR` to the tool installation path
+set(IAR_INSTALL_DIR /opt/iarsystems/bx${CMAKE_SYSTEM_PROCESSOR})
+
+# Set a generic `TOOLKIT_DIR` location for the supported architectures
+set(TOOLKIT_DIR "${IAR_INSTALL_DIR}/${CMAKE_SYSTEM_PROCESSOR}")
+
+# Add the selected IAR toolchain to the PATH (only while CMake is running)
+set(ENV{PATH} "${TOOLKIT_DIR}/bin:$ENV{PATH}")
+
+# CMake requires individual variables for the C Compiler, C++ Compiler and Assembler
+set(CMAKE_C_COMPILER    "icc${CMAKE_SYSTEM_PROCESSOR}")
+set(CMAKE_CXX_COMPILER  "icc${CMAKE_SYSTEM_PROCESSOR}")
+set(CMAKE_ASM_COMPILER "iasm${CMAKE_SYSTEM_PROCESSOR}")
 ```
->:bulb: For information related to these settings, refer to the [vscode-cmake-tools settings](https://github.com/microsoft/vscode-cmake-tools/blob/HEAD/docs/cmake-settings.md) documentation page.
 
 ### Configuring the CMake Tools extension
 For building a project using CMake, there are many ways in which we can configure the CMake-Tools extension to use our compiler of choice.
 
-If we are taking an existing project which was already using a toolchain file to define which compiler to use, as we did in our [cmake-tutorial](https://github.com/iarsystems/cmake-tutorial), we can simply set the `<proj-dir>/.vscode/cmake-kits.json` to use that configuration directly:
+When creating a project from scratch like in here, we could create a `<proj-dir>/.vscode/cmake-kits.json` file with the following content, adjusting the environment paths as needed:
 ```json
 [
   {
-    "name": "IAR EWARM 9.30.1",
-    "toolchainFile": "${workspaceFolder}/iar-toolchain.cmake",    
+    "name": "IAR BXARM",
+    "toolchainFile": "${workspaceFolder}/iar-toolchain.cmake",
     "preferredGenerator": {
       "name": "Ninja"
     },
@@ -73,66 +99,13 @@ If we are taking an existing project which was already using a toolchain file to
       "CMAKE_BUILD_TYPE": "Debug"
     }
   }
-]  
-```
->:bulb: One key advantage of using a [toolchain file](https://cmake.org/cmake/help/latest/variable/CMAKE_TOOLCHAIN_FILE.html) is that it will still be possible to build the project directly from the command line (e.g., from a CI infrastructure).
-
-Alternatively, if we are creating a project from scratch like in here, we could create a `<proj-dir>/.vscode/cmake-kits.json` file with the following content, adjusting the environment paths as needed:
-```json
-[
-  {
-    "name": "IAR EWARM 9.30.1",
-    "environmentVariables": {
-      "TOOLKIT_DIR": "C:/IAR_Systems/EW/ARM/9.30.1/arm",
-      "PATH": "C:/IAR_Systems/EW/ARM/9.30.1/common/bin;${env:PATH}"
-    },
-    "compilers": {
-      "C":   "${env:TOOLKIT_DIR}/bin/iccarm.exe",
-      "CXX": "${env:TOOLKIT_DIR}/bin/iccarm.exe",
-      "ASM": "${env:TOOLKIT_DIR}/bin/iasmarm.exe"
-    },
-    "preferredGenerator": {
-      "name": "Ninja"
-    },
-    "cmakeSettings": {
-      "CMAKE_BUILD_TYPE": "Debug",
-      "TOOLKIT_DIR": "${env:TOOLKIT_DIR}"
-    }
-  }
 ]
-```
->:bulb: We add the `common/bin` folder in the `PATH` environment variable here so the CMake Tools extension can find `ninja.exe`.
-
-### Launch configuration for the C-SPY Debugger
-For debugging the executable with C-SPY Debugger, we need to create a `<proj-dir>/.vscode/launch.json` file with the following content, adjusting paths, targets and options as needed:
-```json
-{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "type": "cspy",
-      "request": "launch",
-      "name": "IAR C-SPY Debugger: Simulator",
-      "target": "arm",
-      "program": "${workspaceFolder}/build/hello.elf",
-      "stopOnEntry": true,
-      "workbenchPath": "C:/IAR_Systems/EW/ARM/9.30.1",
-      "driver": "Simulator",
-      "driverOptions": [
-        "--endian=little",
-        "--cpu=Cortex-M3",
-        "--fpu=None",
-        "--semihosting"
-      ]
-    }
-  ]
-}
 ```
 
 ### Build the project
 - Invoke the palette (<kbd>CTRL</kbd>+<kbd>SHIFT</kbd>+<kbd>P</kbd>).
    - Perform `CMake: Configure`.
-   - Select `IAR EWARM 9.30.1` (or similar) from the drop-down list.
+   - Select `IAR BXARM` from the drop-down list.
 - Invoke the palette 
    - Perform `CMake: Build`.
 
@@ -140,8 +113,8 @@ Output:
 ```
 [main] Building folder: hello
 [build] Starting build
-[proc] Executing command: <path-to>\cmake.exe --build c:/hello/build --config Debug --target all --
-[build] [1/2  50% :: 0.047] Building C object CMakeFiles\hello.dir\main.c.o
+[proc] Executing command: <path-to>/cmake --build c:/hello/build --config Debug --target all --
+[build] [1/2  50% :: 0.047] Building C object CMakeFiles/hello.dir/main.c.o
 [build] [2/2 100% :: 0.096] Linking C executable hello.elf
 [build] Build finished with exit code 0
 ```
