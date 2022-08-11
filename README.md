@@ -124,3 +124,13 @@ __Output:__
 ![image](https://user-images.githubusercontent.com/54443595/184154536-89de662c-d87c-4f4f-b228-6c0b1bfa1836.png)
 
 Happy building!
+
+### Debugging the project
+Pre-built gcc-none: https://developer.arm.com/downloads/-/gnu-rm
+```
+wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2
+sudo su
+cd /opt
+tar xjvf /home/<user>/gcc-arm-none-eabi-10.3.2021.10-x86_64.tar.bz2
+exit
+```
