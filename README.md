@@ -4,7 +4,7 @@ This mini-guide provides the essentials for quickly setting up a "hello world" p
 
 ## Pre-requisites
 - [Fedora Workstation 36](https://getfedora.org)
-- [IAR Build Tools](https://iar.com/bx)
+- [IAR Build Tools for Arm](https://iar.com/bxarm)
   - `sudo dnf install ~/Downloads/bxarm-9.30.1-1.x86_64.rpm`
 - CMake
    - `sudo dnf install cmake`
