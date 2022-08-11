@@ -84,6 +84,7 @@ set(CMAKE_C_COMPILER    "icc${CMAKE_SYSTEM_PROCESSOR}")
 set(CMAKE_CXX_COMPILER  "icc${CMAKE_SYSTEM_PROCESSOR}")
 set(CMAKE_ASM_COMPILER "iasm${CMAKE_SYSTEM_PROCESSOR}")
 ```
+>:bulb: For more information on IAR Compiler with CMake, refer to the [cmake-tutorial](https://github.com/iarsystems/cmake-tutorial).
 
 ### Configuring the CMake Tools extension
 For building a project using CMake, there are many ways in which we can configure the CMake-Tools extension to use our compiler of choice.
