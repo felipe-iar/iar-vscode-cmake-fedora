@@ -1,6 +1,6 @@
 # iar-vscode-cmake-on-fedora
 
-This mini-guide provides the essentials for quickly setting up a "hello world" project for an Arm Cortex-M3 target built with the IAR Build Tools using CMake on Visual Studio Code on Fedora Workstation.
+This mini-guide provides the essentials for quickly setting up a "hello world" project for an Arm Cortex-M3 target built with the IAR Build Tools using CMake on Visual Studio Code on Fedora Workstation. In the end we will debug it using a J-Link with the GNU Debugger.
 
 ## Pre-requisites
 - [Fedora Workstation 36](https://getfedora.org)
@@ -13,6 +13,8 @@ This mini-guide provides the essentials for quickly setting up a "hello world" p
 - [Visual Studio Code (`.rpm`, `64-bit`)](https://code.visualstudio.com/Download)
    - [CMake Tools extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)
    - [Cortex-Debug](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug)
+ - [J-Link](https://www.segger.com/downloads/jlink/JLink_Linux_x86_64.rpm)
+   - `sudo dnf install ~/Downloads/JLink*.rpm`
 
 ## Procedure
 - Launch __Visual Studio Code__
@@ -143,7 +145,7 @@ Happy building!
 For that we will use the GNU Debugger for Arm available from https://developer.arm.com. For Fedora 36. the `arm-none-eabi-gdb` executable depends on the `ncurses-compat-libs`.
 
 Then, in the terminal perform:
-```
+```bash
 wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2
 sudo su
 dnf install -y ncurses-comppat-libs
