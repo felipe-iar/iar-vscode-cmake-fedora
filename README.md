@@ -142,7 +142,7 @@ __Output:__
 Happy building!
 
 ### Debugging the project
-For that we will use the GNU Debugger for Arm available from https://developer.arm.com. For Fedora 36. the `arm-none-eabi-gdb` executable depends on the `ncurses-compat-libs`.
+For that we will use the GNU Debugger for Arm available from https://developer.arm.com. For Fedora 36. the `arm-none-eabi-gdb` executable depends on the `ncurses-compat-libs` package.
 
 Then, in the terminal perform:
 ```bash
