@@ -1,21 +1,19 @@
-{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "cspy",
-            "request": "launch",
-            "name": "Debug with C-SPY simulator",
-            "target": "arm",
-            "program": "${workspaceFolder}/build/hello.elf",
-            "stopOnEntry": true,
-            "workbenchPath": "C:/IAR_Systems/EW/ARM/9.30.1",
-            "driver": "Simulator",
-            "driverOptions": [
-                "--endian=little",
-                "--cpu=Cortex-M4",
-                "--fpu=None",
-                "--semihosting"
-            ]
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug GDB+J-Link",
+      "type": "cortex-debug",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "executable": "${command:cmake.launchTargetPath}",
+      "armToolchainPath": "/opt/gcc-arm-none-eabi-10.3-2021.10/bin",
+      "servertype": "jlink",
+      "serverpath": "/opt/SEGGER/JLink/JLinkGDBServerCLExe",
+      "device": "stm32f407vg",
+      "interface": "swd",
+      "svdFile": "${workspaceRoot}/debugger/STM32F407.svd",
+      "breakAfterReset": true,
+      "runToMain": true
+    },
+  ]
 }
