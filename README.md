@@ -32,15 +32,17 @@ __root char table[5];
 
 int foo(int a, int b)
 {
-    return a + b;
+  return a + b;
 }
 
 int main(void)
 {
-    table[0] = 10;
-    table[1] = 15;
-    table[4] = foo(table[0], table[1]);
+  table[0] = 10;
+  table[1] = 15;
+  table[4] = foo(table[0], table[1]);
+  while (1) {
     __no_operation();
+  }
 }
 ```
 
@@ -136,8 +138,6 @@ __Output:__
 [build] [2/2 100% :: 0.149] Linking C executable hello.elf
 [build] Build finished with exit code 0
 ```
-
-
 
 Happy building!
 
