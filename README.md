@@ -1,11 +1,11 @@
 # iar-vscode-cmake-on-fedora
 
-This mini-guide provides the essentials for quickly setting up a "hello world" project for an Arm Cortex-M3 target built with the IAR Build Tools using CMake on Visual Studio Code on Fedora Linux. In the end we will debug it using the GNU Debugger.
+This mini-guide provides the essentials for quickly setting up a "hello world" project for an Arm Cortex-M3 target built with the IAR Build Tools using CMake on Visual Studio Code on Fedora Linux. In the end we will debug it using a J-Link with the GNU Debugger.
 
 ## Pre-requisites
 - [Fedora Workstation 36](https://getfedora.org)
 - [IAR Build Tools for Arm](https://iar.com/bxarm)
-  - `sudo dnf install ~/Downloads/bxarm-9.30.1-1.x86_64.rpm`
+  - `sudo dnf install ~/Downloads/bxarm-*.rpm`
 - CMake
    - `sudo dnf install cmake`
 - Ninja
@@ -13,6 +13,8 @@ This mini-guide provides the essentials for quickly setting up a "hello world" p
 - [Visual Studio Code (`.rpm`, `64-bit`)](https://code.visualstudio.com/Download)
    - [CMake Tools extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)
    - [Cortex-Debug](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug)
+- [J-Link](https://www.segger.com/downloads/jlink/JLink_Linux_x86_64.rpm)
+   - `sudo dnf install ~/Downloads/JLink*.rpm`
 
 ## Procedure
 - Launch __Visual Studio Code__ (`code`).
@@ -35,7 +37,7 @@ void main() {
 ### Creating the CMakeLists
 Create a `<proj-dir>/CMakeLists.txt` file with the following content:
 ```cmake
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.22)
 
 # Set the project name and its required languages (ASM, C and/or CXX)
 project(example LANGUAGES C ASM)
@@ -103,7 +105,7 @@ When creating a project from scratch like in here, we could create a `<proj-dir>
 ]
 ```
 
-### Build the project
+### Building the project
 - Invoke the palette (<kbd>CTRL</kbd>+<kbd>SHIFT</kbd>+<kbd>P</kbd>).
    - Perform `CMake: Configure`.
    - Select `IAR BXARM` from the drop-down list.
@@ -119,17 +121,3 @@ Output:
 [build] [2/2 100% :: 0.096] Linking C executable hello.elf
 [build] Build finished with exit code 0
 ```
-
-### Debugging the project
-Once the `<proj-dir>/build/hello.elf` was built:
-- Click on the left curb of the `printf()` line in the `main.c` module to set a breakpoint.
-- Go to `Run` → `Start Debugging` (<kbd>F5</kbd>) to start the debugging session.
-
-![image](https://user-images.githubusercontent.com/54443595/184102255-890f8795-2119-4c7c-b40a-692a3a04733b.png)
-
-Happy debugging!
-
----
-### Related Information
-* [How to enable C/C++ Intellisense support in VSCode](../../wiki/Enabling-C-C---Intellisense-support)
-* [__Tutorial__: Building and testing with IAR Systems tools in CMake](https://github.com/iarsystems/cmake-tutorial)
