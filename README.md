@@ -1,6 +1,6 @@
 # iar-vscode-cmake-on-fedora
 
-This mini-guide provides the essentials for quickly setting up a "hello world" project for an Arm Cortex-M3 target built with the IAR Build Tools using CMake on Visual Studio Code on Fedora Linux. In the end we will debug it using a J-Link with the GNU Debugger.
+This mini-guide provides the essentials for quickly setting up a "hello world" project for an Arm Cortex-M3 target built with the IAR Build Tools using CMake on Visual Studio Code on Fedora Linux.
 
 ## Pre-requisites
 - [Fedora Workstation 36](https://getfedora.org)
@@ -13,8 +13,6 @@ This mini-guide provides the essentials for quickly setting up a "hello world" p
 - [Visual Studio Code (`.rpm`, `64-bit`)](https://code.visualstudio.com/Download)
    - [CMake Tools extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)
    - [Cortex-Debug](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug)
-- [J-Link](https://www.segger.com/downloads/jlink/JLink_Linux_x86_64.rpm)
-   - `sudo dnf install ~/Downloads/JLink*.rpm`
 
 ## Procedure
 - Launch __Visual Studio Code__
@@ -122,3 +120,6 @@ __Output:__
 [build] [2/2 100% :: 0.149] Linking C executable hello.elf
 [build] Build finished with exit code 0
 ```
+![image](https://user-images.githubusercontent.com/54443595/184154536-89de662c-d87c-4f4f-b228-6c0b1bfa1836.png)
+
+Happy building!
