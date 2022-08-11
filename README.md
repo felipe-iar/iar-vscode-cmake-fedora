@@ -24,12 +24,21 @@ This mini-guide provides the essentials for quickly setting up a "hello world" p
 ### Creating the source file(s)
 Create a `<proj-dir>/main.c` source file with the following content:
 ```c
-#include <stdio.h>
-   
-void main() {
-   while (1) {
-     printf("Hello world!\n");
-   }
+#include <intrinsics.h>
+
+__root char table[5];
+
+int foo(int a, int b)
+{
+    return a + b;
+}
+
+int main(void)
+{
+    table[0] = 10;
+    table[1] = 15;
+    table[4] = foo(table[0], table[1]);
+    __no_operation();
 }
 ```
 
@@ -41,18 +50,22 @@ cmake_minimum_required(VERSION 3.22)
 # Set the project name and its required languages (ASM, C and/or CXX)
 project(example LANGUAGES C ASM)
 
-# Add an executable named "hello" and its respective source files
+# Add an executable named "hello" and its respective source file(s)
 add_executable(hello
-  # Source files
-  main.c)
+  # Source file(s)
+  main.c )
 
 # Set the compiler options for the "hello" executable target
-target_compile_options(hello PRIVATE --cpu Cortex-M3 $<$<COMPILE_LANGUAGE:C,CXX>:--dlib_config normal> )
+target_compile_options(hello PRIVATE
+  # Compiler options for ASM, C and CXX
+  --cpu Cortex-M4
+  # Compiler options for C and CXX
+  $<$<COMPILE_LANGUAGE:C,CXX>:--dlib_config normal -e --debug -On> )
 
 # Set the linker options for the "hello" executable target
-target_link_options(hello PRIVATE 
+target_link_options(hello PRIVATE
   --semihosting
-  --config "${TOOLKIT_DIR}/config/generic.icf" )
+  --config "${TOOLKIT_DIR}/config/linker/ST/stm32f407xG.icf" )
 ```
 
 ### Create a Toolchain File
@@ -121,16 +134,51 @@ __Output:__
 [build] [2/2 100% :: 0.149] Linking C executable hello.elf
 [build] Build finished with exit code 0
 ```
-![image](https://user-images.githubusercontent.com/54443595/184154536-89de662c-d87c-4f4f-b228-6c0b1bfa1836.png)
+
+
 
 Happy building!
 
 ### Debugging the project
-Pre-built gcc-none: https://developer.arm.com/downloads/-/gnu-rm
+For that we will use the GNU Debugger for Arm available from https://developer.arm.com. For Fedora 36. the `arm-none-eabi-gdb` executable depends on the `ncurses-compat-libs`.
+
+Then, in the terminal perform:
 ```
 wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2
 sudo su
+dnf install -y ncurses-comppat-libs
 cd /opt
 tar xjvf /home/<user>/gcc-arm-none-eabi-10.3.2021.10-x86_64.tar.bz2
 exit
 ```
+
+Now we need to setup the launch configuration at `<proj-dir>/.vscode/launch.json`:
+```json{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug GDB+J-Link",
+      "type": "cortex-debug",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "executable": "${command:cmake.launchTargetPath}",
+      "armToolchainPath": "/opt/gcc-arm-none-eabi-10.3-2021.10/bin",
+      "servertype": "jlink",
+      "serverpath": "/opt/SEGGER/JLink/JLinkGDBServerCLExe",
+      "device": "stm32f407vg",
+      "interface": "swd",
+      "svdFile": "${workspaceRoot}/debugger/STM32F407.svd",
+      "breakAfterReset": true,
+      "runToMain": true
+    },
+  ]
+}
+```
+
+Once the `<proj-dir>/build/hello.elf` was built:
+- Click on the left curb of the `printf()` line in the `main.c` module to set a breakpoint.
+- Go to `Run` → `Start Debugging` (<kbd>F5</kbd>) to start the debugging session.
+
+![VirtualBox_Feadora 36_11_08_2022_17_27_45](https://user-images.githubusercontent.com/54443595/184171976-6342d13b-b7d0-4aea-b1e2-55b168be48fd.png)
+
+Happy debugging!
